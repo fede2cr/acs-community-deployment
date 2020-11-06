@@ -12,6 +12,8 @@ services:
     alfresco:
         image: alfresco/alfresco-content-repository-community:6.2.1-A8
         mem_limit: 1500m
+        depends_on:
+            - postgres
         environment:
             JAVA_OPTS: "
                 -Ddb.driver=org.postgresql.Driver
@@ -31,29 +33,34 @@ services:
                 -Dmessaging.broker.url=\"failover:(nio://activemq:61616)?timeout=3000&jms.useCompression=true\"
                 -Ddeployment.method=DOCKER_COMPOSE
 
-                -DlocalTransform.core-aio.url=http://transform-core-aio:8090/
+                -Dlocal.transform.service.enabled=true
+                -DlocalTransform.pdfrenderer.url=http://alfresco-pdf-renderer:8090/
+                -DlocalTransform.imagemagick.url=http://imagemagick:8090/
+                -DlocalTransform.libreoffice.url=http://libreoffice:8090/
+                -DlocalTransform.tika.url=http://tika:8090/
+                -DlocalTransform.misc.url=http://transform-misc:8090/
 
-                -Dalfresco-pdf-renderer.url=http://transform-core-aio:8090/
-                -Djodconverter.url=http://transform-core-aio:8090/
-                -Dimg.url=http://transform-core-aio:8090/
-                -Dtika.url=http://transform-core-aio:8090/
-                -Dtransform.misc.url=http://transform-core-aio:8090/
+                -Dlegacy.transform.service.enabled=true
+                -Dalfresco-pdf-renderer.url=http://alfresco-pdf-renderer:8090/
+                -Djodconverter.url=http://libreoffice:8090/
+                -Dimg.url=http://imagemagick:8090/
+                -Dtika.url=http://tika:8090/
+                -Dtransform.misc.url=http://transform-misc:8090/
 
                 -Dcsrf.filter.enabled=false
-                -Xms1500m -Xmx1500m
+                -Xmx${ALFRESCO_XMX} -Xms${ALFRESCO_XMS}
                 "
-
-    transform-core-aio:
-        image: alfresco/alfresco-transform-core-aio:2.3.5
-        mem_limit: 1536m
-        environment:
-            JAVA_OPTS: " -Xms256m -Xmx1536m"
-        ports:
-            - 8090:8090
+                #-DlocalTransform.core-aio.url=http://transform-core-aio:8090/
+        volumes:
+            - ./volumes/data/alf-repo-data:/usr/local/tomcat/alf_data
+            - ./volumes/logs/alfresco:/usr/local/tomcat/logs
+            - ./volumes/config/alfresco-global.properties:/usr/local/tomcat/shared/classes/alfresco-global.properties
 
     share:
         image: alfresco/alfresco-share:6.2.1
         mem_limit: 1g
+        depends_on:
+            - postgres
         environment:
             REPO_HOST: "alfresco"
             REPO_PORT: "8080"
@@ -65,6 +72,10 @@ services:
                 -Dalfresco.context=alfresco
                 -Dalfresco.protocol=http
                 "
+        volumes:
+            - ./volumes/logs/share:/usr/local/tomcat/logs
+            - ./volumes/config/ext-share-config-custom.xml:/usr/local/tomcat/shared/classes/alfresco/web-extension/ext-share-config-custom.xml
+
 
     postgres:
         image: postgres:11.7
@@ -73,13 +84,39 @@ services:
             - POSTGRES_PASSWORD=alfresco
             - POSTGRES_USER=alfresco
             - POSTGRES_DB=alfresco
-        command: postgres -c max_connections=300 -c log_min_messages=LOG
+        command: "
+            postgres
+              -c max_connections=${PG_MAX_CONNECTIONS}
+              -c shared_buffers=${PG_SHARED_BUFFERS}
+              -c effective_cache_size=${PG_EFFECTIVE_CACHE_SIZE}
+              -c maintenance_work_mem=${PG_MAINTENANCE_WORK_MEM}
+              -c checkpoint_completion_target=${PG_CHECKPOINT_COMPLETION_TARGET}
+              -c wal_buffers=${PG_WAL_BUFFERS}
+              -c default_statistics_target=${PG_DEFAULT_STATISTICS_TARGET}
+              -c random_page_cost=${PG_RANDOM_PAGE_COST}
+              -c effective_io_concurrency=${PG_EFFECTIVE_IO_CONCURRENCY}
+              -c work_mem=${PG_WORK_MEM}
+              -c min_wal_size=${PG_MIN_WAL_SIZE}
+              -c max_wal_size=${PG_MAX_WAL_SIZE}
+              -c max_worker_processes=${PG_MAX_WORKER_PROCESSES}
+              -c max_parallel_workers_per_gather=${PG_MAX_PARALLEL_WORKERS_PER_GATHER}
+              -c max_parallel_workers=${PG_MAX_PARALLEL_WORKERS}
+              -c logging_collector=on
+              -c log_min_messages=LOG
+              -c log_directory=/var/log/postgresql
+              "
+
         ports:
             - 5432:5432
+        volumes:
+           - ./volumes/data/postgres-data:/var/lib/postgresql/data
+           - ./volumes/logs/postgres:/var/log/postgresql
 
     solr6:
         image: alfresco/alfresco-search-services:2.0.0
         mem_limit: 2g
+        depends_on:
+            - alfresco
         environment:
             #Solr needs to know how to register itself with Alfresco
             - SOLR_ALFRESCO_HOST=alfresco
@@ -94,6 +131,9 @@ services:
             - "SOLR_JAVA_MEM=-Xms2g -Xmx2g"
         ports:
             - 8083:8983 #Browser port
+        volumes:
+            - ./volumes/data/solr-data:/opt/alfresco-search-services/data
+
 
     activemq:
         image: alfresco/alfresco-activemq:5.15.8
@@ -114,3 +154,54 @@ services:
         links:
             - alfresco
             - share
+        volumes:
+            - ./volumes/config:/etc/nginx/conf.d
+            - ./volumes/logs/nginx:/var/log/nginx
+
+
+    alfresco-pdf-renderer:
+        image: alfresco/alfresco-pdf-renderer:2.1.0
+        mem_limit: 1g
+        environment:
+            JAVA_OPTS: " -Xms256m -Xmx512m"
+        ports:
+            - 8090:8090
+
+    imagemagick:
+        image: alfresco/alfresco-imagemagick:2.1.0
+        mem_limit: 1g
+        environment:
+            JAVA_OPTS: " -Xms256m -Xmx512m"
+        ports:
+            - 8091:8090
+
+    libreoffice:
+        image: alfresco/alfresco-libreoffice:2.1.0
+        mem_limit: 1g
+        environment:
+            JAVA_OPTS: " -Xms256m -Xmx512m"
+        ports:
+            - 8092:8090
+
+    tika:
+        image: alfresco/alfresco-tika:2.1.0
+        mem_limit: 1g
+        environment:
+            JAVA_OPTS: " -Xms256m -Xmx512m"
+        ports:
+            - 8093:8090
+
+    transform-misc:
+        image: alfresco/alfresco-transform-misc:2.1.0
+        mem_limit: 1g
+        environment:
+            JAVA_OPTS: " -Xms256m -Xmx512m"
+        ports:
+            - 8094:8090
+
+    certbot:
+        image: certbot/certbot
+        volumes:
+            - ./volumes/data/certbot/conf:/etc/letsencrypt
+            - ./volumes/data/certbot/www:/var/www/certbot
+

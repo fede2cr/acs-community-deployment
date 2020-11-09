@@ -75,6 +75,8 @@ services:
         volumes:
             - ./volumes/logs/share:/usr/local/tomcat/logs
             - ./volumes/config/ext-share-config-custom.xml:/usr/local/tomcat/shared/classes/alfresco/web-extension/ext-share-config-custom.xml
+            - ./volumes/data/modules/amps_share:/usr/local/tomcat/amps_share
+            - ./volumes/data/modules/webapps-share:/usr/local/tomcat/webapps
 
 
     postgres:
@@ -157,6 +159,8 @@ services:
         volumes:
             - ./volumes/config:/etc/nginx/conf.d
             - ./volumes/logs/nginx:/var/log/nginx
+            - ./volumes/data/certbot/conf:/etc/letsencrypt
+            - ./volumes/data/certbot/www:/var/www/certbot
 
 
     alfresco-pdf-renderer:

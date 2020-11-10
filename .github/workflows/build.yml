@@ -22,3 +22,8 @@ jobs:
       run: |
         sudo ./fixperms.sh
         ( cd docker-compose && docker-compose up -d)
+    - name: Basic web tests
+      run: |
+        wget -O - localhost:8080
+        wget -O - localhost:8080/alfresco
+        wget -O - localhost:8080/share

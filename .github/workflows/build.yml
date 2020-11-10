@@ -18,4 +18,4 @@ jobs:
     - name: Alfresco install
       run: |
         sudo ./fixperms.sh
-        ( cd docker-compose && docker-compose -d up)
+        ( cd docker-compose && docker-compose up -d)

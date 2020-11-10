@@ -19,8 +19,8 @@ jobs:
         fetch-depth: 0
     - name: Install deps
       run: |
-        apt install python3-pip
-        pip3 install docker-compose
+        apt-get install -y pip
+        pip install docker-compose
     - name: Alfresco install
       run: |
         ./fixperms.sh

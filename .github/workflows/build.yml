@@ -1,0 +1,33 @@
+name: Build CI
+
+on:
+  push:
+  pull_request:
+  release:
+    types: [published]
+  check_suite:
+    type: [rerequested]
+
+jobs:
+  alf-install:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.2.0
+      with:
+        fetch-depth: 0
+    #- name: Postman install
+    #  run:
+    #    sudo snap install postman
+    - name: Alfresco install
+      run: |
+        ( cd docker-compose && sudo ../fixperms.sh )
+        ( cd docker-compose && docker-compose up -d)
+    - name: Install Pause
+      run: sleep 3m
+    - name: View logs
+      run: |
+        ( cd docker-compose && docker-compose logs --no-color)
+    - name: Basic web tests
+      run: |
+        wget -O - localhost:8080/alfresco
+        wget -O - localhost:8080/share

@@ -11,8 +11,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container:
-      image: node
     steps:
     - uses: actions/checkout@v2.2.0
       with:

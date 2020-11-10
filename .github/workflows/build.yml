@@ -19,6 +19,7 @@ jobs:
     - name: Install deps
       run: |
         sudo apt install docker
+        sudo systemctl start docker
         pip3 install docker-compose
     - name: Alfresco install
       run: |

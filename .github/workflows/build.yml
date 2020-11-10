@@ -12,8 +12,9 @@ jobs:
   test:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout
+    - uses: actions/checkout@v2.2.0
       with:
+        submodules: true
         fetch-depth: 0
     - name: Install deps
       run: |

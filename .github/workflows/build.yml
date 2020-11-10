@@ -17,5 +17,5 @@ jobs:
         fetch-depth: 0
     - name: Alfresco install
       run: |
-        ./fixperms.sh
+        sudo ./fixperms.sh
         ( cd docker-compose && docker-compose -d up)

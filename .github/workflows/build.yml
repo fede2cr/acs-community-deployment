@@ -1,12 +1,5 @@
 name: Build CI
 
-image: docker:edge-git
-services:
-  docker:dind
-
-before_script:
-  - apk add --no-cache py3-pip && pip install docker-compose
-
 on:
   push:
   pull_request:
@@ -17,11 +10,18 @@ on:
 
 jobs:
   test:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2.2.0
       with:
         submodules: true
         fetch-depth: 0
+    - name: Install deps
+      run: |
+        sudo apt install docker
+        sudo systemctl unmask docker
+        sudo systemctl start docker
+        pip3 install docker-compose
     - name: Alfresco install
       run: |
         sudo ./fixperms.sh

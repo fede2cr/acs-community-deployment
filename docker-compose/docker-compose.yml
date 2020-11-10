@@ -74,7 +74,7 @@ services:
                 "
         volumes:
             - ./volumes/logs/share:/usr/local/tomcat/logs
-#            - ./volumes/config/ext-share-config-custom.xml:/usr/local/tomcat/shared/classes/alfresco/web-extension/ext-share-config-custom.xml
+            - ./volumes/config/ext-share-config-custom.xml:/usr/local/tomcat/shared/classes/alfresco/web-extension/ext-share-config-custom.xml
 #            - ./volumes/data/modules/amps_share:/usr/local/tomcat/amps_share
 #            - ./volumes/data/modules/webapps-share:/usr/local/tomcat/webapps
 

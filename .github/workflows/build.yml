@@ -20,7 +20,7 @@ jobs:
         sudo snap install postman
     - name: Alfresco install
       run: |
-        ( cd docker-compose && sudo ./fixperms.sh )
+        ( cd docker-compose && sudo ../fixperms.sh )
         ( cd docker-compose && docker-compose up -d)
     - name: View logs
       run: |

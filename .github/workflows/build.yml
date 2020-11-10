@@ -1,0 +1,25 @@
+name: Build CI
+
+on:
+  push:
+  pull_request:
+  release:
+    types: [published]
+  check_suite:
+    type: [rerequested]
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout
+      with:
+        fetch-depth: 0
+    - name: Install deps
+      run: |
+        sudo apt install docker
+        pip3 install docker-compose
+    - name: Alfresco install
+      run: |
+        sudo ./fixperms.sh
+        ( cd docker-compose && docker-compose up)

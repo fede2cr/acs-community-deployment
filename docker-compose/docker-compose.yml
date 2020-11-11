@@ -149,7 +149,7 @@ services:
     proxy:
         image: nginx:stable-alpine
         depends_on:
-            - content-app
+            - alfresco
             - share
         volumes:
             - ./volumes/config:/etc/nginx/conf.d

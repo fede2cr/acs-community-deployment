@@ -156,8 +156,6 @@ services:
             - ./volumes/logs/nginx:/var/log/nginx
             - ./volumes/data/certbot/conf:/etc/letsencrypt
             - ./volumes/data/certbot/www:/var/www/certbot
-        networks:
-            - internal
         ports:
             - 80:80
             - 443:443

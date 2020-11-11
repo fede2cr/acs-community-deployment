@@ -75,8 +75,8 @@ services:
         volumes:
             - ./volumes/logs/share:/usr/local/tomcat/logs
             - ./volumes/config/ext-share-config-custom.xml:/usr/local/tomcat/shared/classes/alfresco/web-extension/ext-share-config-custom.xml
-#            - ./volumes/data/modules/amps_share:/usr/local/tomcat/amps_share
-#            - ./volumes/data/modules/webapps-share:/usr/local/tomcat/webapps
+            - ./volumes/data/modules/amps_share:/usr/local/tomcat/amps_share
+              #            - ./volumes/data/modules/webapps-share:/usr/local/tomcat/webapps
 
 
     postgres:
@@ -147,20 +147,36 @@ services:
             - 61613:61613 # STOMP
 
     proxy:
-        image: alfresco/acs-community-ngnix:1.0.0
-        mem_limit: 128m
+        image: nginx:stable-alpine
         depends_on:
-            - alfresco
-        ports:
-            - 8080:8080
-        links:
-            - alfresco
+            - content-app
             - share
         volumes:
             - ./volumes/config:/etc/nginx/conf.d
             - ./volumes/logs/nginx:/var/log/nginx
             - ./volumes/data/certbot/conf:/etc/letsencrypt
             - ./volumes/data/certbot/www:/var/www/certbot
+        networks:
+            - internal
+        ports:
+            - 80:80
+            - 443:443
+
+#    proxy:
+#        image: alfresco/acs-community-ngnix:1.0.0
+#        mem_limit: 128m
+#        depends_on:
+#            - alfresco
+#        ports:
+#            - 8080:8080
+#        links:
+#            - alfresco
+#            - share
+#        volumes:
+#            - ./volumes/config:/etc/nginx/conf.d
+#            - ./volumes/logs/nginx:/var/log/nginx
+#            - ./volumes/data/certbot/conf:/etc/letsencrypt
+#            - ./volumes/data/certbot/www:/var/www/certbot
 
 
     alfresco-pdf-renderer:

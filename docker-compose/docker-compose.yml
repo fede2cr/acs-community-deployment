@@ -201,10 +201,3 @@ services:
             JAVA_OPTS: " -Xms256m -Xmx512m"
         ports:
             - 8094:8090
-
-    certbot:
-        image: certbot/certbot
-        volumes:
-            - ./volumes/data/certbot/conf:/etc/letsencrypt
-            - ./volumes/data/certbot/www:/var/www/certbot
-

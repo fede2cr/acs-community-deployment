@@ -147,7 +147,7 @@ services:
             - 61613:61613 # STOMP
 
     proxy:
-        image: nginx:stable-alpine
+        build: ./proxy
         mem_limit: 128m
         depends_on:
             - alfresco

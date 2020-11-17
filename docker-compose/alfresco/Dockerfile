@@ -1,5 +1,6 @@
 FROM alfresco/alfresco-content-repository-community:6.2.1-A8 
 
+USER root
 # Fix to https://issues.alfresco.com/jira/browse/ALF-22013
 ENV LC_ALL C.UTF-8 \
     LANG C.UTF-8
@@ -7,7 +8,7 @@ ENV LC_ALL C.UTF-8 \
 ARG TOMCAT_DIR=/usr/local/tomcat
 
 # Logs always under $TOMCAT/logs folder
-RUN echo "cd $TOMCAT_DIR/logs" > $TOMCAT_DIR/bin/setenv.sh \
+RUN echo "cd $TOMCAT_DIR/logs" | tee $TOMCAT_DIR/bin/setenv.sh \
     && chmod +x $TOMCAT_DIR/bin/setenv.sh
 
 # Install modules and addons
@@ -24,12 +25,12 @@ RUN yum -y update && \
  yum -y install unzip && \
  yum clean all
 
-RUN set -x \
-        && mkdir /tmp/aos \
-        && wget --no-check-certificate https://download.alfresco.com/cloudfront/release/community/201806-GA-build-00113/alfresco-aos-module-distributionzip-1.2.0.zip \
-        && unzip alfresco-aos-module-distributionzip-1.2.0.zip -d /tmp/aos \
-        && mv /tmp/aos/extension/* $TOMCAT_DIR/shared/classes/alfresco/extension \
-        && mv /tmp/aos/alfresco-aos-module-1.2.0.amp amps \
-        && mv /tmp/aos/aos-module-license.txt licenses \
-        && mv /tmp/aos/_vti_bin.war $TOMCAT_DIR/webapps \
-        && rm -rf /tmp/aos alfresco-aos-module-distributionzip-1.2.0.zip
+#RUN set -x \
+#        && mkdir /tmp/aos \
+#        && wget --no-check-certificate https://download.alfresco.com/cloudfront/release/community/201806-GA-build-00113/alfresco-aos-module-distributionzip-1.2.0.zip \
+#        && unzip alfresco-aos-module-distributionzip-1.2.0.zip -d /tmp/aos \
+#        && mv /tmp/aos/extension/* $TOMCAT_DIR/shared/classes/alfresco/extension \
+#        && mv /tmp/aos/alfresco-aos-module-1.2.0.amp amps \
+#        && mv /tmp/aos/aos-module-license.txt licenses \
+#        && mv /tmp/aos/_vti_bin.war $TOMCAT_DIR/webapps \
+#        && rm -rf /tmp/aos alfresco-aos-module-distributionzip-1.2.0.zip

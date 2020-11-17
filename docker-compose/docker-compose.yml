@@ -10,7 +10,7 @@ version: "2"
 
 services:
     alfresco:
-        image: alfresco/alfresco-content-repository-community:6.2.1-A8
+        build: ./alfresco
         mem_limit: 1500m
         depends_on:
             - postgres
@@ -57,7 +57,7 @@ services:
             - ./volumes/config/alfresco-global.properties:/usr/local/tomcat/shared/classes/alfresco-global.properties
 
     share:
-        image: alfresco/alfresco-share:6.2.1
+        build: ./share
         mem_limit: 1g
         depends_on:
             - postgres

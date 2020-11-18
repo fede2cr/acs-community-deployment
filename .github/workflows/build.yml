@@ -34,3 +34,4 @@ jobs:
         wget -O - --no-check-certificate http://localhost/share
         wget -O - --no-check-certificate https://localhost/alfresco
         wget -O - --no-check-certificate https://localhost/share
+        python3 test/alf_test.py

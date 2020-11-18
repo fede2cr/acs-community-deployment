@@ -15,9 +15,7 @@ jobs:
     - uses: actions/checkout@v2.2.0
       with:
         fetch-depth: 0
-    #- name: Postman install
-    #  run:
-    #    sudo snap install postman
+        submodules: true
     - name: Alfresco install
       run: |
         ( cd docker-compose && sudo ../fixperms.sh )

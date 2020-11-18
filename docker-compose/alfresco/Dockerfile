@@ -23,6 +23,7 @@ RUN java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install \
 RUN yum -y update && \
  yum -y install wget && \
  yum -y install unzip && \
+ yum -y https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.centos7.x86_64.rpm && \
  yum clean all
 
 #RUN set -x \

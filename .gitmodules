@@ -1,3 +1,3 @@
-[submodule "alfresco-plugins"]
-	path = alfresco-plugins
+[submodule "alfresco_addons"]
+	path = alfresco_addons
 	url = https://github.com/Greencorecr/alfresco_addons

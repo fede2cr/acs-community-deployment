@@ -29,13 +29,3 @@ RUN yum -y update && \
  yum -y install unzip && \
  yum -y install https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.centos7.x86_64.rpm && \
  yum clean all
-
-#RUN set -x \
-#        && mkdir /tmp/aos \
-#        && wget --no-check-certificate https://download.alfresco.com/cloudfront/release/community/201806-GA-build-00113/alfresco-aos-module-distributionzip-1.2.0.zip \
-#        && unzip alfresco-aos-module-distributionzip-1.2.0.zip -d /tmp/aos \
-#        && mv /tmp/aos/extension/* $TOMCAT_DIR/shared/classes/alfresco/extension \
-#        && mv /tmp/aos/alfresco-aos-module-1.2.0.amp amps \
-#        && mv /tmp/aos/aos-module-license.txt licenses \
-#        && mv /tmp/aos/_vti_bin.war $TOMCAT_DIR/webapps \
-#        && rm -rf /tmp/aos alfresco-aos-module-distributionzip-1.2.0.zip

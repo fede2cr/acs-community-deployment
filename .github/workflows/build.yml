@@ -20,7 +20,7 @@ jobs:
     #    sudo snap install postman
     - name: Alfresco install
       run: |
-        ( mkdir docker-compose/volumes/data/certs/conf && cd docker-compose/volumes/data/certs/conf && sudo openssl req -x509 -nodes -days 365 -subj "/C=CA/ST=QC/O=Company, Inc./CN=newdomain.com" -addext "subjectAltName=DNS:newdomain.com" -newkey rsa:2048 -out fullchain.pem -keyout privkey.pem )
+        ( mkdir -p docker-compose/volumes/data/certs/conf && cd docker-compose/volumes/data/certs/conf && sudo openssl req -x509 -nodes -days 365 -subj "/C=CA/ST=QC/O=Company, Inc./CN=newdomain.com" -addext "subjectAltName=DNS:newdomain.com" -newkey rsa:2048 -out fullchain.pem -keyout privkey.pem )
         ( cd docker-compose && docker-compose up -d)
     - name: Install Pause
       run: sleep 3m

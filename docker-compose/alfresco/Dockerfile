@@ -11,6 +11,10 @@ ARG TOMCAT_DIR=/usr/local/tomcat
 RUN echo "cd $TOMCAT_DIR/logs" | tee $TOMCAT_DIR/bin/setenv.sh \
     && chmod +x $TOMCAT_DIR/bin/setenv.sh
 
+# Fix volume perms
+RUN mkdir -p /usr/local/tomcat/alf_data /usr/local/tomcat/logs
+RUN chown 33000:33000 /usr/local/tomcat/alf_data /usr/local/tomcat/logs
+
 # Install modules and addons
 RUN mkdir -p $TOMCAT_DIR/amps
 COPY modules/amps $TOMCAT_DIR/amps
